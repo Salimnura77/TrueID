@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TrueID.me — Nigeria's Trusted Digital Identity Platform</title>
+<meta name="description" content="Verify once with NIN, BVN, Passport, Driver's License, or Voter's Card. Get a reusable, encrypted TrueID credential that works everywhere — banking, government, healthcare, telecom." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Inter+Tight:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          navy: { DEFAULT: '#0F2238', 2: '#17375E' },
+          brand: { DEFAULT: '#1E88F5', 2: '#42A5F5' },
+          lightbg: '#F8FAFC',
+          borderc: '#DCE3EA',
+          ink: '#0F172A',
+          muted: '#64748B',
+        },
+        fontFamily: {
+          sans: ['Inter', 'system-ui', 'sans-serif'],
+          display: ['"Inter Tight"', 'Inter', 'system-ui', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+      }
+    }
+  }
+</script>
+<style>
+  :root{
+    --navy:#0F2238; --navy2:#17375E; --brand:#1E88F5; --brand2:#42A5F5;
+    --lightbg:#F8FAFC; --borderc:#DCE3EA; --ink:#0F172A; --muted:#64748B;
+  }
+  *{ -webkit-font-smoothing:antialiased; }
+  html{ scroll-behavior:smooth; }
+  body{ background:var(--lightbg); color:var(--ink); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+  }
+
+  .grad-hero{ background: radial-gradient(120% 140% at 15% -10%, #1c3a5e 0%, transparent 55%), linear-gradient(180deg, var(--navy) 0%, var(--navy2) 100%); }
+  .grad-cta{ background: linear-gradient(135deg, var(--brand) 0%, var(--brand2) 100%); }
+  .grad-text{ background: linear-gradient(135deg, var(--brand) 0%, var(--brand2) 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+  .btn-primary{ background: linear-gradient(135deg, var(--brand) 0%, var(--brand2) 100%); box-shadow: 0 8px 24px -8px rgba(30,136,245,0.55); }
+  .btn-primary:hover{ box-shadow: 0 12px 32px -6px rgba(30,136,245,0.7); transform: translateY(-1px); }
+  .btn-primary:active{ transform: translateY(0); }
+
+  .card{ background:#fff; border:1px solid var(--borderc); border-radius:20px; }
+  .card-navy{ background: linear-gradient(180deg, #12294a 0%, var(--navy) 100%); border:1px solid rgba(255,255,255,0.08); }
+
+  .reveal{ opacity:0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(.2,.65,.3,1), transform 0.7s cubic-bezier(.2,.65,.3,1); }
+  .reveal.in{ opacity:1; transform: translateY(0); }
+  .reveal-delay-1{ transition-delay: .08s; }
+  .reveal-delay-2{ transition-delay: .16s; }
+  .reveal-delay-3{ transition-delay: .24s; }
+  .reveal-delay-4{ transition-delay: .32s; }
+
+  #nav{ transition: background-color .3s ease, box-shadow .3s ease, border-color .3s ease; }
+  #nav.scrolled{ background-color: rgba(255,255,255,0.85); backdrop-filter: blur(12px); box-shadow: 0 1px 0 rgba(15,23,42,0.06); border-bottom: 1px solid var(--borderc); }
+
+  .ring-loop{ stroke: url(#fpGradient); fill:none; stroke-linecap:round; }
+  .fp-draw{ stroke-dasharray: 900; stroke-dashoffset: 900; animation: draw 2.6s cubic-bezier(.2,.7,.2,1) forwards; }
+  .fp-draw.d1{ animation-delay:.05s }
+  .fp-draw.d2{ animation-delay:.2s }
+  .fp-draw.d3{ animation-delay:.35s }
+  .fp-draw.d4{ animation-delay:.5s }
+  .fp-draw.d5{ animation-delay:.65s }
+  .fp-draw.d6{ animation-delay:.8s }
+  .fp-draw.d7{ animation-delay:.95s }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+
+  .float-slow{ animation: floaty 6s ease-in-out infinite; }
+  .float-slow.delay{ animation-delay: 1.4s; }
+  @keyframes floaty{ 0%,100%{ transform: translateY(0px); } 50%{ transform: translateY(-10px); } }
+
+  .accordion-content{ max-height:0; overflow:hidden; transition: max-height .4s ease; }
+
+  .marquee-track{ animation: scroll-left 32s linear infinite; }
+  .marquee-track:hover{ animation-play-state: paused; }
+  @keyframes scroll-left{ from{ transform: translateX(0);} to{ transform: translateX(-50%);} }
+
+  .num-tick{ font-variant-numeric: tabular-nums; }
+
+  .glow-ring{ position:absolute; border-radius:9999px; filter: blur(60px); opacity:0.35; pointer-events:none; }
+
+  .step-line{ background: linear-gradient(180deg, var(--brand), rgba(30,136,245,0.08)); }
+
+  .chip{ border:1px solid var(--borderc); background:#fff; }
+
+  ::selection{ background: rgba(30,136,245,0.22); }
+
+  .focus-ring:focus-visible{ outline:2px solid var(--brand); outline-offset:2px; }
+
+  .code-window{ background:#0B1729; border:1px solid rgba(255,255,255,0.08); }
+  .dot{ width:11px; height:11px; border-radius:9999px; }
+</style>
+</head>
+<body class="antialiased">
+
+<!-- ================= NAV ================= -->
+<header id="nav" class="fixed top-0 inset-x-0 z-50">
+  <nav class="max-w-7xl mx-auto px-6 lg:px-8 h-20 flex items-center justify-between">
+    <a href="#top" class="flex items-center gap-3 shrink-0 focus-ring rounded-lg">
+      <img src="data:image/webp;base64,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" alt="TrueID.me logo" class="w-10 h-10 rounded-[10px] shadow-sm" />
+      <span class="font-display font-extrabold text-lg tracking-tight text-navy">True<span class="text-brand">ID</span>.me</span>
+    </a>
+
+    <div class="hidden lg:flex items-center gap-8 text-[15px] font-medium text-navy/80">
+      <div class="relative group">
+        <button class="flex items-center gap-1 hover:text-navy transition focus-ring rounded px-1">
+          Solutions
+          <svg width="10" height="10" viewBox="0 0 10 10" class="mt-0.5 opacity-60"><path d="M1 3l4 4 4-4" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
+        </button>
+        <div class="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+          <div class="w-64 card p-3 shadow-xl shadow-navy/10">
+            <a href="#individuals" class="block px-3 py-2.5 rounded-xl hover:bg-lightbg transition text-sm">
+              <span class="block font-semibold text-navy">Individuals</span>
+              <span class="block text-muted text-xs mt-0.5">One credential, everywhere</span>
+            </a>
+            <a href="#business" class="block px-3 py-2.5 rounded-xl hover:bg-lightbg transition text-sm">
+              <span class="block font-semibold text-navy">Businesses</span>
+              <span class="block text-muted text-xs mt-0.5">Faster, cheaper KYC</span>
+            </a>
+            <a href="#government" class="block px-3 py-2.5 rounded-xl hover:bg-lightbg transition text-sm">
+              <span class="block font-semibold text-navy">Government</span>
+              <span class="block text-muted text-xs mt-0.5">Service delivery at scale</span>
+            </a>
+            <a href="#developers" class="block px-3 py-2.5 rounded-xl hover:bg-lightbg transition text-sm">
+              <span class="block font-semibold text-navy">Developers</span>
+              <span class="block text-muted text-xs mt-0.5">APIs, SDKs, webhooks</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <a href="#security" class="hover:text-navy transition focus-ring rounded px-1">Security</a>
+      <a href="#developers" class="hover:text-navy transition focus-ring rounded px-1">Developers</a>
+      <a href="#faq" class="hover:text-navy transition focus-ring rounded px-1">FAQ</a>
+      <a href="#contact" class="hover:text-navy transition focus-ring rounded px-1">Contact</a>
+    </div>
+
+    <div class="hidden lg:flex items-center gap-3">
+      <a href="#" class="px-4 py-2.5 text-[15px] font-semibold text-navy hover:text-brand transition focus-ring rounded-lg">Sign In</a>
+      <a href="#cta" class="btn-primary px-5 py-2.5 rounded-xl text-white text-[15px] font-semibold transition focus-ring">Get Started</a>
+    </div>
+
+    <button id="menuBtn" class="lg:hidden p-2 -mr-2 focus-ring rounded-lg" aria-label="Open menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="#0F2238" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+  </nav>
+
+  <div id="mobileMenu" class="lg:hidden hidden bg-white border-b border-borderc px-6 py-6 space-y-1">
+    <a href="#individuals" class="block py-3 font-medium text-navy border-b border-borderc/70">Individuals</a>
+    <a href="#business" class="block py-3 font-medium text-navy border-b border-borderc/70">Businesses</a>
+    <a href="#government" class="block py-3 font-medium text-navy border-b border-borderc/70">Government</a>
+    <a href="#developers" class="block py-3 font-medium text-navy border-b border-borderc/70">Developers</a>
+    <a href="#security" class="block py-3 font-medium text-navy border-b border-borderc/70">Security</a>
+    <a href="#faq" class="block py-3 font-medium text-navy">FAQ</a>
+    <div class="pt-4 flex gap-3">
+      <a href="#" class="flex-1 text-center py-3 rounded-xl border border-borderc font-semibold text-navy">Sign In</a>
+      <a href="#cta" class="flex-1 text-center py-3 rounded-xl btn-primary text-white font-semibold">Get Started</a>
+    </div>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section id="top" class="grad-hero relative overflow-hidden pt-40 pb-28 lg:pt-48 lg:pb-36">
+  <div class="glow-ring w-[520px] h-[520px] bg-brand -top-40 -left-40"></div>
+  <div class="glow-ring w-[420px] h-[420px] bg-brand2 bottom-0 right-0"></div>
+
+  <div class="max-w-7xl mx-auto px-6 lg:px-8 relative grid lg:grid-cols-[1.05fr_0.95fr] gap-16 items-center">
+    <div>
+      <div class="reveal in inline-flex items-center gap-2 chip bg-white/5 border-white/15 text-white/90 rounded-full px-4 py-1.5 text-sm font-medium backdrop-blur">
+        <span>🇳🇬</span> Nigeria's Trusted Digital Identity Platform
+      </div>
+
+      <h1 class="reveal in reveal-delay-1 font-display font-extrabold text-white text-[2.6rem] leading-[1.08] sm:text-6xl sm:leading-[1.06] mt-6 tracking-tight">
+        One Verification.<br/>
+        <span class="grad-text">Lifetime Access.</span>
+      </h1>
+
+      <p class="reveal in reveal-delay-2 text-white/70 text-lg leading-relaxed mt-6 max-w-xl">
+        Verify once using trusted Nigerian identity documents — NIN, BVN, Passport, Driver's License, or Voter's Card — and access banking, government, healthcare, telecom, and digital services instantly with your reusable TrueID credential.
+      </p>
+
+      <div class="reveal in reveal-delay-3 flex flex-col sm:flex-row gap-4 mt-9">
+        <a href="#cta" class="btn-primary text-white font-semibold px-7 py-4 rounded-xl text-center transition focus-ring">Get Verified</a>
+        <a href="#contact" class="text-white font-semibold px-7 py-4 rounded-xl text-center border border-white/20 hover:bg-white/5 transition focus-ring">Partner With Us</a>
+      </div>
+
+      <div class="reveal in reveal-delay-4 flex items-center gap-6 mt-10 text-white/50 text-sm">
+        <span>NDPR compliant</span>
+        <span class="w-1 h-1 rounded-full bg-white/30"></span>
+        <span>CBN aligned</span>
+        <span class="w-1 h-1 rounded-full bg-white/30"></span>
+        <span>Bank-grade encryption</span>
+      </div>
+    </div>
+
+    <!-- Signature illustration: animated fingerprint / credential -->
+    <div class="reveal in reveal-delay-2 relative flex items-center justify-center">
+      <div class="relative w-full max-w-[440px] aspect-square">
+        <svg viewBox="0 0 400 400" class="w-full h-full float-slow">
+          <defs>
+            <linearGradient id="fpGradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#1E88F5"/>
+              <stop offset="100%" stop-color="#42A5F5"/>
+            </linearGradient>
+          </defs>
+          <circle cx="200" cy="200" r="188" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)"/>
+          <!-- shield outline -->
+          <path d="M200 46 L302 84 V190 C302 262 258 310 200 336 C142 310 98 262 98 190 V84 Z"
+                fill="rgba(30,136,245,0.05)" stroke="rgba(255,255,255,0.25)" stroke-width="2.5"/>
+          <!-- fingerprint arcs -->
+          <path class="ring-loop fp-draw d1" stroke-width="4" d="M200 118 C150 118 128 150 128 190 C128 230 148 262 178 274"/>
+          <path class="ring-loop fp-draw d2" stroke-width="4" d="M200 132 C162 132 144 158 144 190 C144 220 160 246 186 258"/>
+          <path class="ring-loop fp-draw d3" stroke-width="4" d="M200 146 C174 146 160 166 160 190 C160 212 172 232 194 244"/>
+          <path class="ring-loop fp-draw d4" stroke-width="4" d="M200 160 C186 160 176 174 176 190 C176 204 184 218 202 228"/>
+          <path class="ring-loop fp-draw d5" stroke-width="4" d="M222 128 C252 138 268 162 268 192 C268 224 250 254 220 268"/>
+          <path class="ring-loop fp-draw d6" stroke-width="4" d="M214 146 C238 154 250 172 250 192 C250 214 236 236 212 248"/>
+          <path class="ring-loop fp-draw d7" stroke-width="4" d="M206 164 C222 170 232 180 232 192 C232 206 222 220 204 228"/>
+        </svg>
+
+        <div class="absolute -bottom-4 -right-4 sm:bottom-4 sm:right-0 card-navy rounded-2xl p-4 w-52 shadow-2xl reveal in reveal-delay-4">
+          <div class="flex items-center gap-2 text-white/60 text-xs font-medium mb-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Verified just now
+          </div>
+          <div class="text-white font-semibold text-sm">Adaeze O.</div>
+          <div class="text-white/50 text-xs mt-0.5">TrueID • ****-2291</div>
+          <div class="mt-3 h-px bg-white/10"></div>
+          <div class="flex items-center justify-between mt-3">
+            <span class="text-white/50 text-xs">Consent shared</span>
+            <span class="text-brand2 text-xs font-semibold">Bank KYC</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TRUSTED BY ================= -->
+<section class="py-14 bg-white border-b border-borderc overflow-hidden">
+  <p class="text-center text-muted text-sm font-medium mb-8 reveal">Built to integrate across Nigeria's trust ecosystem</p>
+  <div class="relative max-w-7xl mx-auto px-6">
+    <div class="flex gap-16 marquee-track w-max">
+      <div class="flex gap-16 items-center">
+        <span class="text-xl font-display font-bold text-navy/30 whitespace-nowrap">Tier-1 Banks</span>
+        <span class="text-xl font-display font-bold text-navy/30 whitespace-nowrap">Fintech Partners</span>
+        <span class="text-xl font-display font-bold text-navy/30 whitespace-nowrap">Government Agencies</span>
+        <span class="text-xl font-display font-bold text-navy/30 whitespace-nowrap">Healthcare Networks</span>
+        <span class="text-xl font-display font-bold text-navy/30 whitespace-nowrap">Telecom Operators</span>
+        <span class="text-xl font-display font-bold text-navy/30 whitespace-nowrap">Insurance Providers</span>
+      </div>
+      <div class="flex gap-16 items-center" aria-hidden="true">
+        <span class="text-xl font-display font-bold text-navy/30 whitespace-nowrap">Tier-1 Banks</span>
+        <span class="text-xl font-display font-bold text-navy/30 whitespace-nowrap">Fintech Partners</span>
+        <span class="text-xl font-display font-bold text-navy/30 whitespace-nowrap">Government Agencies</span>
+        <span class="text-xl font-display font-bold text-navy/30 whitespace-nowrap">Healthcare Networks</span>
+        <span class="text-xl font-display font-bold text-navy/30 whitespace-nowrap">Telecom Operators</span>
+        <span class="text-xl font-display font-bold text-navy/30 whitespace-nowrap">Insurance Providers</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROBLEM ================= -->
+<section class="py-24 lg:py-32">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="max-w-2xl reveal">
+      <span class="text-brand font-semibold text-sm tracking-wide uppercase">The problem</span>
+      <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-navy mt-3 tracking-tight">Nigeria verifies the same person, over and over.</h2>
+      <p class="text-muted text-lg mt-4 leading-relaxed">Every bank, lender, and service provider repeats the same identity checks — costing time, money, and trust.</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-14">
+      <div class="card p-7 reveal">
+        <div class="w-11 h-11 rounded-xl bg-brand/10 flex items-center justify-center mb-4">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h10M4 17h7" stroke="#1E88F5" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="font-display font-bold text-lg text-navy">Multiple ID systems</h3>
+        <p class="text-muted text-sm mt-2 leading-relaxed">NIN, BVN, Passport, and Voter's Card each live in a different silo, with no single source of truth.</p>
+      </div>
+      <div class="card p-7 reveal reveal-delay-1">
+        <div class="w-11 h-11 rounded-xl bg-brand/10 flex items-center justify-center mb-4">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 6v6l4 2" stroke="#1E88F5" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="#1E88F5" stroke-width="2"/></svg>
+        </div>
+        <h3 class="font-display font-bold text-lg text-navy">Repeated KYC fatigue</h3>
+        <p class="text-muted text-sm mt-2 leading-relaxed">Users re-submit the same documents to every new bank, lender, or platform they sign up with.</p>
+      </div>
+      <div class="card p-7 reveal reveal-delay-2">
+        <div class="w-11 h-11 rounded-xl bg-brand/10 flex items-center justify-center mb-4">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2 3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6l-9-4Z" stroke="#1E88F5" stroke-width="2" stroke-linejoin="round"/><path d="M9.5 12l1.8 1.8L15 10" stroke="#1E88F5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="font-display font-bold text-lg text-navy">Fraud & forgery</h3>
+        <p class="text-muted text-sm mt-2 leading-relaxed">Manually reviewed paper documents remain easy to counterfeit and expensive to verify at scale.</p>
+      </div>
+      <div class="card p-7 reveal">
+        <div class="w-11 h-11 rounded-xl bg-brand/10 flex items-center justify-center mb-4">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.2" stroke="#1E88F5" stroke-width="2"/><path d="M5 20c0-4 3-6.5 7-6.5s7 2.5 7 6.5" stroke="#1E88F5" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="font-display font-bold text-lg text-navy">Financial exclusion</h3>
+        <p class="text-muted text-sm mt-2 leading-relaxed">Rural and unbanked Nigerians are locked out of digital services they can't easily verify for.</p>
+      </div>
+      <div class="card p-7 reveal reveal-delay-1">
+        <div class="w-11 h-11 rounded-xl bg-brand/10 flex items-center justify-center mb-4">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M13 3v7h6l-8 11v-7H5l8-11Z" stroke="#1E88F5" stroke-width="2" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="font-display font-bold text-lg text-navy">Slow onboarding</h3>
+        <p class="text-muted text-sm mt-2 leading-relaxed">Account opening can take days when identity has to be manually cross-checked at every step.</p>
+      </div>
+      <div class="card p-7 reveal reveal-delay-2">
+        <div class="w-11 h-11 rounded-xl bg-brand/10 flex items-center justify-center mb-4">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="10" width="16" height="10" rx="2" stroke="#1E88F5" stroke-width="2"/><path d="M8 10V7a4 4 0 018 0v3" stroke="#1E88F5" stroke-width="2"/></svg>
+        </div>
+        <h3 class="font-display font-bold text-lg text-navy">Privacy risk</h3>
+        <p class="text-muted text-sm mt-2 leading-relaxed">Sensitive documents get copied and stored across dozens of separate, inconsistently secured systems.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SOLUTION ================= -->
+<section class="py-24 lg:py-32 bg-white border-y border-borderc">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+      <div class="reveal">
+        <span class="text-brand font-semibold text-sm tracking-wide uppercase">Our solution</span>
+        <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-navy mt-3 tracking-tight">Verify once. Carry it everywhere.</h2>
+        <p class="text-muted text-lg mt-4 leading-relaxed max-w-lg">TrueID.me turns a one-time verification into a lifetime credential — encrypted, user-controlled, and instantly shareable.</p>
+
+        <div class="mt-8 space-y-1">
+          <div class="flex gap-4 py-4 border-b border-borderc">
+            <span class="text-brand font-display font-bold text-sm w-6 pt-0.5">01</span>
+            <div>
+              <h4 class="font-semibold text-navy">Verify once</h4>
+              <p class="text-muted text-sm mt-1">Using a trusted government ID — NIN, BVN, Passport, or more.</p>
+            </div>
+          </div>
+          <div class="flex gap-4 py-4 border-b border-borderc">
+            <span class="text-brand font-display font-bold text-sm w-6 pt-0.5">02</span>
+            <div>
+              <h4 class="font-semibold text-navy">Receive your TrueID credential</h4>
+              <p class="text-muted text-sm mt-1">A reusable, encrypted identity credential issued to you alone.</p>
+            </div>
+          </div>
+          <div class="flex gap-4 py-4 border-b border-borderc">
+            <span class="text-brand font-display font-bold text-sm w-6 pt-0.5">03</span>
+            <div>
+              <h4 class="font-semibold text-navy">Store it in your wallet</h4>
+              <p class="text-muted text-sm mt-1">Held securely on-device and backed by encrypted cloud storage.</p>
+            </div>
+          </div>
+          <div class="flex gap-4 py-4">
+            <span class="text-brand font-display font-bold text-sm w-6 pt-0.5">04</span>
+            <div>
+              <h4 class="font-semibold text-navy">Share anywhere, instantly</h4>
+              <p class="text-muted text-sm mt-1">Via QR code, link, or API — verified in seconds, every time.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wallet mockup -->
+      <div class="reveal reveal-delay-2 flex justify-center">
+        <div class="w-full max-w-sm">
+          <div class="card-navy rounded-[28px] p-6 shadow-2xl shadow-navy/20">
+            <div class="flex items-center justify-between mb-6">
+              <span class="text-white font-display font-bold">TrueID Wallet</span>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" stroke="white" stroke-opacity=".6" stroke-width="1.6"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="white" stroke-opacity=".6" stroke-width="1.6"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="white" stroke-opacity=".6" stroke-width="1.6"/><path d="M14 14h3v3h-3zM19 14h2M14 19h2M19 19h2" stroke="white" stroke-opacity=".6" stroke-width="1.6"/></svg>
+            </div>
+
+            <div class="rounded-2xl grad-cta p-5 relative overflow-hidden">
+              <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-white/10"></div>
+              <span class="text-white/80 text-xs font-medium">Verified Identity Credential</span>
+              <div class="text-white font-display font-bold text-xl mt-2">Chinedu A. Okafor</div>
+              <div class="flex items-center justify-between mt-6">
+                <span class="text-white/70 text-xs font-mono">TID-08214-NG</span>
+                <span class="text-white text-xs font-semibold bg-white/20 rounded-full px-2.5 py-1">Active</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mt-4">
+              <div class="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="mx-auto mb-2"><rect x="4" y="4" width="6" height="6" stroke="#42A5F5" stroke-width="1.8"/><rect x="14" y="4" width="6" height="6" stroke="#42A5F5" stroke-width="1.8"/><rect x="4" y="14" width="6" height="6" stroke="#42A5F5" stroke-width="1.8"/><rect x="14" y="14" width="2.5" height="2.5" fill="#42A5F5"/><rect x="17.5" y="14" width="2.5" height="2.5" fill="#42A5F5"/><rect x="14" y="17.5" width="2.5" height="2.5" fill="#42A5F5"/><rect x="17.5" y="17.5" width="2.5" height="2.5" fill="#42A5F5"/></svg>
+                <span class="text-white/70 text-xs">Share QR</span>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="mx-auto mb-2"><path d="M12 4v16m0-16 5 5m-5-5-5 5" stroke="#42A5F5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="text-white/70 text-xs">Send / Receive</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= KEY FEATURES ================= -->
+<section class="py-24 lg:py-32">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="max-w-2xl reveal">
+      <span class="text-brand font-semibold text-sm tracking-wide uppercase">Key features</span>
+      <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-navy mt-3 tracking-tight">Everything trust infrastructure needs.</h2>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-5 mt-14 auto-rows-fr">
+      <div class="card p-6 lg:col-span-2 reveal">
+        <h3 class="font-display font-bold text-navy">One-time verification</h3>
+        <p class="text-muted text-sm mt-2 leading-relaxed">Verify once with any supported document — reuse the credential for life, across every partner.</p>
+      </div>
+      <div class="card p-6 lg:col-span-3 reveal reveal-delay-1">
+        <h3 class="font-display font-bold text-navy">Digital Wallet</h3>
+        <p class="text-muted text-sm mt-2 leading-relaxed">Store credentials, send and receive money, and manage every verification from one secure app.</p>
+      </div>
+      <div class="card p-6 reveal reveal-delay-2">
+        <h3 class="font-display font-bold text-navy">QR Verification</h3>
+        <p class="text-muted text-sm mt-2 leading-relaxed">Scan-and-confirm identity in seconds, no paperwork.</p>
+      </div>
+      <div class="card p-6 reveal reveal-delay-2">
+        <h3 class="font-display font-bold text-navy">API Integration</h3>
+        <p class="text-muted text-sm mt-2 leading-relaxed">Drop TrueID verification into any product with a few lines of code.</p>
+      </div>
+      <div class="card p-6 reveal reveal-delay-3">
+        <h3 class="font-display font-bold text-navy">Privacy Controls</h3>
+        <p class="text-muted text-sm mt-2 leading-relaxed">Selective disclosure means you share only what's asked for — nothing more.</p>
+      </div>
+      <div class="card p-6 reveal reveal-delay-3">
+        <h3 class="font-display font-bold text-navy">Offline / USSD Support</h3>
+        <p class="text-muted text-sm mt-2 leading-relaxed">Feature-phone users verify and transact without a smartphone or data.</p>
+      </div>
+      <div class="card p-6 reveal reveal-delay-4">
+        <h3 class="font-display font-bold text-navy">AI Fraud Detection</h3>
+        <p class="text-muted text-sm mt-2 leading-relaxed">Behavioral and document signals flag anomalies before they become losses.</p>
+      </div>
+      <div class="card p-6 lg:col-span-2 reveal reveal-delay-4">
+        <h3 class="font-display font-bold text-navy">Biometric Authentication</h3>
+        <p class="text-muted text-sm mt-2 leading-relaxed">Face and fingerprint checks bind the credential to its rightful owner.</p>
+      </div>
+      <div class="card p-6 lg:col-span-3 reveal">
+        <h3 class="font-display font-bold text-navy">Selective Disclosure & Enterprise Security</h3>
+        <p class="text-muted text-sm mt-2 leading-relaxed">Share a single verified fact — "over 18," "KYC passed" — without exposing full documents, backed by enterprise-grade encryption.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PRODUCT SHOWCASE ================= -->
+<section class="py-24 lg:py-32 bg-white border-y border-borderc">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="max-w-2xl reveal">
+      <span class="text-brand font-semibold text-sm tracking-wide uppercase">Product</span>
+      <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-navy mt-3 tracking-tight">Built for people. Ready for partners.</h2>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-6 mt-14">
+      <!-- Mobile wallet mockup -->
+      <div class="card p-8 reveal">
+        <span class="text-brand font-semibold text-xs uppercase tracking-wide">Mobile wallet</span>
+        <div class="mt-5 rounded-2xl bg-lightbg border border-borderc p-5">
+          <div class="flex items-center justify-between text-xs text-muted mb-4">
+            <span>9:41</span>
+            <span>TrueID App</span>
+          </div>
+          <div class="rounded-xl grad-cta p-4 text-white">
+            <span class="text-xs text-white/80">Wallet balance</span>
+            <div class="font-display font-bold text-2xl mt-1">₦48,250.00</div>
+          </div>
+          <div class="grid grid-cols-3 gap-2 mt-4">
+            <div class="bg-white border border-borderc rounded-lg py-3 text-center text-[11px] text-navy font-medium">Send</div>
+            <div class="bg-white border border-borderc rounded-lg py-3 text-center text-[11px] text-navy font-medium">Receive</div>
+            <div class="bg-white border border-borderc rounded-lg py-3 text-center text-[11px] text-navy font-medium">Verify</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verification screen -->
+      <div class="card p-8 reveal reveal-delay-1">
+        <span class="text-brand font-semibold text-xs uppercase tracking-wide">Verification screen</span>
+        <div class="mt-5 rounded-2xl bg-lightbg border border-borderc p-6 flex flex-col items-center text-center">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" class="mb-3"><circle cx="12" cy="12" r="10" stroke="#1E88F5" stroke-width="1.6"/><path d="M8 12.5l2.5 2.5L16 9" stroke="#1E88F5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="font-display font-bold text-navy">Identity Verified</div>
+          <div class="text-muted text-xs mt-1">Matched against NIN in 1.2s</div>
+        </div>
+      </div>
+
+      <!-- Analytics dashboard -->
+      <div class="card p-8 lg:col-span-2 reveal reveal-delay-2">
+        <div class="flex items-center justify-between">
+          <span class="text-brand font-semibold text-xs uppercase tracking-wide">Partner analytics</span>
+          <span class="text-muted text-xs">Last 30 days</span>
+        </div>
+        <div class="mt-6 grid sm:grid-cols-3 gap-4">
+          <div class="border border-borderc rounded-xl p-4">
+            <span class="text-muted text-xs">Verifications</span>
+            <div class="font-display font-bold text-2xl text-navy mt-1">128,402</div>
+          </div>
+          <div class="border border-borderc rounded-xl p-4">
+            <span class="text-muted text-xs">Success rate</span>
+            <div class="font-display font-bold text-2xl text-navy mt-1">99.4%</div>
+          </div>
+          <div class="border border-borderc rounded-xl p-4">
+            <span class="text-muted text-xs">Avg. verify time</span>
+            <div class="font-display font-bold text-2xl text-navy mt-1">1.8s</div>
+          </div>
+        </div>
+        <svg viewBox="0 0 600 120" class="w-full h-28 mt-6">
+          <polyline points="0,90 60,80 120,85 180,60 240,65 300,40 360,48 420,28 480,35 540,15 600,20" fill="none" stroke="#1E88F5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="0,90 60,80 120,85 180,60 240,65 300,40 360,48 420,28 480,35 540,15 600,20 600,120 0,120" fill="rgba(30,136,245,0.08)" stroke="none"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section class="py-24 lg:py-32">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="max-w-2xl reveal">
+      <span class="text-brand font-semibold text-sm tracking-wide uppercase">How it works</span>
+      <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-navy mt-3 tracking-tight">A seamless 8-step flow.</h2>
+    </div>
+
+    <div class="relative mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+      <div class="hidden lg:block absolute top-6 left-0 right-0 h-px bg-borderc"></div>
+      <!-- steps -->
+      <div class="relative reveal">
+        <div class="w-12 h-12 rounded-full grad-cta text-white font-display font-bold flex items-center justify-center relative z-10">1</div>
+        <h4 class="font-semibold text-navy mt-4">Register</h4>
+        <p class="text-muted text-sm mt-1">App, web, or USSD — whichever fits your access.</p>
+      </div>
+      <div class="relative reveal reveal-delay-1">
+        <div class="w-12 h-12 rounded-full grad-cta text-white font-display font-bold flex items-center justify-center relative z-10">2</div>
+        <h4 class="font-semibold text-navy mt-4">Upload IDs</h4>
+        <p class="text-muted text-sm mt-1">NIN, BVN, or any supported document.</p>
+      </div>
+      <div class="relative reveal reveal-delay-2">
+        <div class="w-12 h-12 rounded-full grad-cta text-white font-display font-bold flex items-center justify-center relative z-10">3</div>
+        <h4 class="font-semibold text-navy mt-4">Verification</h4>
+        <p class="text-muted text-sm mt-1">Real-time checks against government APIs.</p>
+      </div>
+      <div class="relative reveal reveal-delay-3">
+        <div class="w-12 h-12 rounded-full grad-cta text-white font-display font-bold flex items-center justify-center relative z-10">4</div>
+        <h4 class="font-semibold text-navy mt-4">Encryption</h4>
+        <p class="text-muted text-sm mt-1">Secure hashing locks your data down.</p>
+      </div>
+      <div class="relative reveal">
+        <div class="w-12 h-12 rounded-full grad-cta text-white font-display font-bold flex items-center justify-center relative z-10">5</div>
+        <h4 class="font-semibold text-navy mt-4">Credential issued</h4>
+        <p class="text-muted text-sm mt-1">Your TrueID is generated and signed.</p>
+      </div>
+      <div class="relative reveal reveal-delay-1">
+        <div class="w-12 h-12 rounded-full grad-cta text-white font-display font-bold flex items-center justify-center relative z-10">6</div>
+        <h4 class="font-semibold text-navy mt-4">Wallet created</h4>
+        <p class="text-muted text-sm mt-1">Stored on-device and in encrypted backup.</p>
+      </div>
+      <div class="relative reveal reveal-delay-2">
+        <div class="w-12 h-12 rounded-full grad-cta text-white font-display font-bold flex items-center justify-center relative z-10">7</div>
+        <h4 class="font-semibold text-navy mt-4">Share QR</h4>
+        <p class="text-muted text-sm mt-1">Consent-based sharing, one scan at a time.</p>
+      </div>
+      <div class="relative reveal reveal-delay-3">
+        <div class="w-12 h-12 rounded-full grad-cta text-white font-display font-bold flex items-center justify-center relative z-10">8</div>
+        <h4 class="font-semibold text-navy mt-4">Instant verification</h4>
+        <p class="text-muted text-sm mt-1">Any partner confirms identity in seconds.</p>
+      </div>
+    </div>
+
+    <p class="text-center text-muted mt-14 reveal">No repeated paperwork. Full user control, every step of the way.</p>
+  </div>
+</section>
+
+<!-- ================= BENEFITS ================= -->
+<section class="py-24 lg:py-32 bg-white border-y border-borderc">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="max-w-2xl reveal">
+      <span class="text-brand font-semibold text-sm tracking-wide uppercase">Benefits</span>
+      <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-navy mt-3 tracking-tight">Built for every side of the transaction.</h2>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-6 mt-14">
+      <div id="individuals" class="card p-8 reveal">
+        <h3 class="font-display font-bold text-xl text-navy">Individuals</h3>
+        <ul class="mt-5 space-y-3 text-sm text-muted">
+          <li class="flex gap-2"><span class="text-brand mt-0.5">✓</span> Verify once, use everywhere</li>
+          <li class="flex gap-2"><span class="text-brand mt-0.5">✓</span> Skip repeat KYC at every provider</li>
+          <li class="flex gap-2"><span class="text-brand mt-0.5">✓</span> Full control over what's shared</li>
+          <li class="flex gap-2"><span class="text-brand mt-0.5">✓</span> Free verification, always</li>
+        </ul>
+      </div>
+      <div id="business" class="card p-8 reveal reveal-delay-1">
+        <h3 class="font-display font-bold text-xl text-navy">Businesses</h3>
+        <ul class="mt-5 space-y-3 text-sm text-muted">
+          <li class="flex gap-2"><span class="text-brand mt-0.5">✓</span> Faster, cheaper onboarding</li>
+          <li class="flex gap-2"><span class="text-brand mt-0.5">✓</span> Fraud-resistant KYC pipeline</li>
+          <li class="flex gap-2"><span class="text-brand mt-0.5">✓</span> Drop-in API and SDKs</li>
+          <li class="flex gap-2"><span class="text-brand mt-0.5">✓</span> Usage-based pricing</li>
+        </ul>
+      </div>
+      <div id="government" class="card p-8 reveal reveal-delay-2">
+        <h3 class="font-display font-bold text-xl text-navy">Government</h3>
+        <ul class="mt-5 space-y-3 text-sm text-muted">
+          <li class="flex gap-2"><span class="text-brand mt-0.5">✓</span> Efficient social service delivery</li>
+          <li class="flex gap-2"><span class="text-brand mt-0.5">✓</span> Reduced identity fraud nationwide</li>
+          <li class="flex gap-2"><span class="text-brand mt-0.5">✓</span> Interoperable with NIMC, NIBSS, FRSC</li>
+          <li class="flex gap-2"><span class="text-brand mt-0.5">✓</span> Auditable, consent-based access</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SECURITY ================= -->
+<section id="security" class="grad-hero py-24 lg:py-32 relative overflow-hidden">
+  <div class="glow-ring w-96 h-96 bg-brand top-0 right-0"></div>
+  <div class="max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-2 gap-16 items-center relative">
+    <div class="reveal">
+      <span class="text-brand2 font-semibold text-sm tracking-wide uppercase">Security</span>
+      <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-white mt-3 tracking-tight">Privacy by design. Trust by default.</h2>
+      <p class="text-white/60 mt-4 leading-relaxed max-w-md">Every credential is encrypted end-to-end, and every share requires your explicit consent.</p>
+
+      <div class="grid sm:grid-cols-2 gap-4 mt-10">
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+          <h4 class="text-white font-semibold text-sm">Encryption</h4>
+          <p class="text-white/50 text-xs mt-1.5 leading-relaxed">Data encrypted at rest and in transit with industry-standard cryptography.</p>
+        </div>
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+          <h4 class="text-white font-semibold text-sm">User consent</h4>
+          <p class="text-white/50 text-xs mt-1.5 leading-relaxed">Nothing is shared without an explicit, logged approval from you.</p>
+        </div>
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+          <h4 class="text-white font-semibold text-sm">Biometric security</h4>
+          <p class="text-white/50 text-xs mt-1.5 leading-relaxed">Face and fingerprint checks bind the credential to its owner.</p>
+        </div>
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+          <h4 class="text-white font-semibold text-sm">NDPR compliance</h4>
+          <p class="text-white/50 text-xs mt-1.5 leading-relaxed">Built to Nigeria's data protection regulation from day one.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal reveal-delay-2 flex justify-center">
+      <svg viewBox="0 0 320 320" class="w-full max-w-sm">
+        <path d="M160 30 L250 62 V150 C250 210 212 250 160 270 C108 250 70 210 70 150 V62 Z"
+              fill="rgba(30,136,245,0.06)" stroke="rgba(66,165,245,0.5)" stroke-width="2"/>
+        <circle cx="160" cy="150" r="46" fill="none" stroke="#42A5F5" stroke-width="2" opacity="0.5">
+          <animate attributeName="r" values="40;52;40" dur="3.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.6;0.15;0.6" dur="3.5s" repeatCount="indefinite"/>
+        </circle>
+        <path d="M138 150 l16 16 30 -34" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STATISTICS ================= -->
+<section class="py-24 lg:py-28 bg-navy relative overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+      <div class="reveal">
+        <div class="font-display font-extrabold text-4xl sm:text-5xl grad-text num-tick" data-target="220" data-suffix="M+">0</div>
+        <p class="text-white/50 text-sm mt-2">Population</p>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <div class="font-display font-extrabold text-4xl sm:text-5xl grad-text num-tick" data-target="40" data-suffix="M+">0</div>
+        <p class="text-white/50 text-sm mt-2">Unbanked adults</p>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <div class="font-display font-extrabold text-4xl sm:text-5xl grad-text num-tick" data-target="20" data-suffix="B+" data-prefix="$">0</div>
+        <p class="text-white/50 text-sm mt-2">Annual remittances</p>
+      </div>
+      <div class="reveal reveal-delay-3">
+        <div class="font-display font-extrabold text-4xl sm:text-5xl grad-text num-tick" data-target="1" data-suffix="B+" data-prefix="$">0</div>
+        <p class="text-white/50 text-sm mt-2">Annual fintech investment</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DEVELOPER PLATFORM ================= -->
+<section id="developers" class="py-24 lg:py-32">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-2 gap-16 items-center">
+    <div class="reveal">
+      <span class="text-brand font-semibold text-sm tracking-wide uppercase">Developer platform</span>
+      <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-navy mt-3 tracking-tight">Ship verification in an afternoon.</h2>
+      <p class="text-muted text-lg mt-4 leading-relaxed max-w-md">REST APIs, SDKs, and webhooks — with sandbox credentials and clear documentation from the first call.</p>
+
+      <div class="grid sm:grid-cols-2 gap-4 mt-8">
+        <div class="chip rounded-xl p-4">
+          <h4 class="font-semibold text-navy text-sm">REST APIs</h4>
+          <p class="text-muted text-xs mt-1">Simple, versioned endpoints</p>
+        </div>
+        <div class="chip rounded-xl p-4">
+          <h4 class="font-semibold text-navy text-sm">SDKs</h4>
+          <p class="text-muted text-xs mt-1">Native libraries, major stacks</p>
+        </div>
+        <div class="chip rounded-xl p-4">
+          <h4 class="font-semibold text-navy text-sm">Webhooks</h4>
+          <p class="text-muted text-xs mt-1">Real-time verification events</p>
+        </div>
+        <div class="chip rounded-xl p-4">
+          <h4 class="font-semibold text-navy text-sm">Docs & examples</h4>
+          <p class="text-muted text-xs mt-1">Copy-paste code samples</p>
+        </div>
+      </div>
+
+      <a href="#contact" class="inline-block mt-8 font-semibold text-brand hover:text-navy transition">Read the docs →</a>
+    </div>
+
+    <div class="reveal reveal-delay-2 code-window rounded-2xl p-6 shadow-2xl">
+      <div class="flex gap-2 mb-5">
+        <span class="dot bg-[#FF5F57]"></span><span class="dot bg-[#FEBC2E]"></span><span class="dot bg-[#28C840]"></span>
+      </div>
+      <pre class="font-mono text-[13px] leading-relaxed text-white/80 overflow-x-auto"><span class="text-white/40">1</span>  <span class="text-brand2">const</span> res = <span class="text-brand2">await</span> trueid.verify({
+<span class="text-white/40">2</span>    method: <span class="text-emerald-300">'nin'</span>,
+<span class="text-white/40">3</span>    id_number: <span class="text-emerald-300">'••••••••••'</span>,
+<span class="text-white/40">4</span>    consent_token: req.token,
+<span class="text-white/40">5</span>  });
+<span class="text-white/40">6</span>
+<span class="text-white/40">7</span>  <span class="text-brand2">if</span> (res.status === <span class="text-emerald-300">'verified'</span>) {
+<span class="text-white/40">8</span>    issueCredential(res.trueId);
+<span class="text-white/40">9</span>  }</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TESTIMONIALS ================= -->
+<section class="py-24 lg:py-32 bg-white border-y border-borderc">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="max-w-2xl reveal">
+      <span class="text-brand font-semibold text-sm tracking-wide uppercase">What partners say</span>
+      <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-navy mt-3 tracking-tight">Trusted by teams building on TrueID.</h2>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-6 mt-14">
+      <div class="card p-7 reveal">
+        <div class="flex gap-1 text-brand mb-4">★★★★★</div>
+        <p class="text-navy/80 text-sm leading-relaxed">"Onboarding time for new customers dropped from days to minutes once we integrated TrueID's verification API."</p>
+        <div class="mt-5 text-sm">
+          <span class="font-semibold text-navy block">Compliance Lead</span>
+          <span class="text-muted text-xs">Digital Lending Platform</span>
+        </div>
+      </div>
+      <div class="card p-7 reveal reveal-delay-1">
+        <div class="flex gap-1 text-brand mb-4">★★★★★</div>
+        <p class="text-navy/80 text-sm leading-relaxed">"The selective disclosure model gives us exactly what we need for KYC without holding sensitive documents ourselves."</p>
+        <div class="mt-5 text-sm">
+          <span class="font-semibold text-navy block">Head of Product</span>
+          <span class="text-muted text-xs">Microfinance Bank</span>
+        </div>
+      </div>
+      <div class="card p-7 reveal reveal-delay-2">
+        <div class="flex gap-1 text-brand mb-4">★★★★★</div>
+        <p class="text-navy/80 text-sm leading-relaxed">"USSD support meant we could finally reach rural agents who don't carry smartphones. That mattered enormously."</p>
+        <div class="mt-5 text-sm">
+          <span class="font-semibold text-navy block">Operations Director</span>
+          <span class="text-muted text-xs">Agricultural Cooperative</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section id="faq" class="py-24 lg:py-32">
+  <div class="max-w-3xl mx-auto px-6 lg:px-8">
+    <div class="text-center reveal">
+      <span class="text-brand font-semibold text-sm tracking-wide uppercase">FAQ</span>
+      <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-navy mt-3 tracking-tight">Questions, answered.</h2>
+    </div>
+
+    <div class="mt-12 space-y-3" id="faqList">
+      <div class="card overflow-hidden reveal">
+        <button class="faq-toggle w-full flex items-center justify-between text-left p-5 font-semibold text-navy focus-ring">
+          Which documents can I verify with?
+          <svg class="faq-icon shrink-0 transition-transform" width="16" height="16" viewBox="0 0 10 10"><path d="M1 3l4 4 4-4" stroke="#0F2238" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
+        </button>
+        <div class="accordion-content px-5"><p class="text-muted text-sm pb-5">NIN, BVN, international passport, driver's license, or voter's card — any one of these is enough to start.</p></div>
+      </div>
+      <div class="card overflow-hidden reveal">
+        <button class="faq-toggle w-full flex items-center justify-between text-left p-5 font-semibold text-navy focus-ring">
+          Is verification free for individuals?
+          <svg class="faq-icon shrink-0 transition-transform" width="16" height="16" viewBox="0 0 10 10"><path d="M1 3l4 4 4-4" stroke="#0F2238" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
+        </button>
+        <div class="accordion-content px-5"><p class="text-muted text-sm pb-5">Yes. Verification is 100% free for every end user, on every platform, always.</p></div>
+      </div>
+      <div class="card overflow-hidden reveal">
+        <button class="faq-toggle w-full flex items-center justify-between text-left p-5 font-semibold text-navy focus-ring">
+          How is my data protected?
+          <svg class="faq-icon shrink-0 transition-transform" width="16" height="16" viewBox="0 0 10 10"><path d="M1 3l4 4 4-4" stroke="#0F2238" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
+        </button>
+        <div class="accordion-content px-5"><p class="text-muted text-sm pb-5">Your credential is encrypted end-to-end and shared only with your explicit, logged consent — fully NDPR compliant.</p></div>
+      </div>
+      <div class="card overflow-hidden reveal">
+        <button class="faq-toggle w-full flex items-center justify-between text-left p-5 font-semibold text-navy focus-ring">
+          Can I use TrueID without a smartphone?
+          <svg class="faq-icon shrink-0 transition-transform" width="16" height="16" viewBox="0 0 10 10"><path d="M1 3l4 4 4-4" stroke="#0F2238" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
+        </button>
+        <div class="accordion-content px-5"><p class="text-muted text-sm pb-5">Yes — USSD and feature-phone SMS flows let you verify and transact without a smartphone or internet data.</p></div>
+      </div>
+      <div class="card overflow-hidden reveal">
+        <button class="faq-toggle w-full flex items-center justify-between text-left p-5 font-semibold text-navy focus-ring">
+          How do businesses integrate TrueID?
+          <svg class="faq-icon shrink-0 transition-transform" width="16" height="16" viewBox="0 0 10 10"><path d="M1 3l4 4 4-4" stroke="#0F2238" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
+        </button>
+        <div class="accordion-content px-5"><p class="text-muted text-sm pb-5">Through our REST API or SDKs, typically live in production within days with our integration team's support.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FINAL CTA ================= -->
+<section id="cta" class="grad-hero py-24 lg:py-28 relative overflow-hidden">
+  <div class="glow-ring w-[420px] h-[420px] bg-brand left-1/2 -translate-x-1/2 top-0"></div>
+  <div class="max-w-3xl mx-auto px-6 text-center relative reveal">
+    <h2 class="font-display font-extrabold text-3xl sm:text-5xl text-white tracking-tight">Ready to build Nigeria's digital identity future?</h2>
+    <p class="text-white/60 text-lg mt-5">Join the individuals, banks, and agencies already building on TrueID.me.</p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center mt-9">
+      <a href="#" class="btn-primary text-white font-semibold px-8 py-4 rounded-xl transition focus-ring">Get Started</a>
+      <a href="#contact" class="text-white font-semibold px-8 py-4 rounded-xl border border-white/20 hover:bg-white/5 transition focus-ring">Partner With Us</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer id="contact" class="bg-navy pt-20 pb-10">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-10">
+      <div class="lg:col-span-2">
+        <div class="flex items-center gap-3">
+          <img src="data:image/webp;base64,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" alt="TrueID.me logo" class="w-9 h-9 rounded-[9px]" />
+          <span class="font-display font-extrabold text-white">True<span class="text-brand2">ID</span>.me</span>
+        </div>
+        <p class="text-white/40 text-sm mt-5 max-w-xs leading-relaxed">Nigeria's trusted digital identity and wallet platform. One verification. Lifetime access.</p>
+        <p class="text-white/30 text-xs mt-6">Contact: Salimnurayusuf@gmail.com · 0814 881 8289</p>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold text-sm mb-4">Company</h4>
+        <ul class="space-y-2.5 text-white/40 text-sm">
+          <li><a href="#" class="hover:text-white transition">About</a></li>
+          <li><a href="#" class="hover:text-white transition">Careers</a></li>
+          <li><a href="#contact" class="hover:text-white transition">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold text-sm mb-4">Solutions</h4>
+        <ul class="space-y-2.5 text-white/40 text-sm">
+          <li><a href="#individuals" class="hover:text-white transition">Individuals</a></li>
+          <li><a href="#business" class="hover:text-white transition">Businesses</a></li>
+          <li><a href="#government" class="hover:text-white transition">Government</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold text-sm mb-4">Developers</h4>
+        <ul class="space-y-2.5 text-white/40 text-sm">
+          <li><a href="#developers" class="hover:text-white transition">API Docs</a></li>
+          <li><a href="#security" class="hover:text-white transition">Security</a></li>
+          <li><a href="#" class="hover:text-white transition">Status</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="border-t border-white/10 mt-14 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <p class="text-white/30 text-xs">© 2026 TrueID.me. All rights reserved.</p>
+      <div class="flex gap-6 text-white/30 text-xs">
+        <a href="#" class="hover:text-white/60 transition">Privacy</a>
+        <a href="#" class="hover:text-white/60 transition">Terms</a>
+        <a href="#" class="hover:text-white/60 transition">NDPR</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Sticky nav shadow
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 12);
+  });
+
+  // Mobile menu
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => io.observe(el));
+
+  // Animated counters
+  const counters = document.querySelectorAll('.num-tick');
+  const cio = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      const target = parseFloat(el.dataset.target);
+      const suffix = el.dataset.suffix || '';
+      const prefix = el.dataset.prefix || '';
+      const duration = 1600;
+      const start = performance.now();
+      function tick(now){
+        const p = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        const val = target < 10 ? (target * eased).toFixed(0) : Math.floor(target * eased);
+        el.textContent = prefix + val + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+      cio.unobserve(el);
+    });
+  }, { threshold: 0.4 });
+  counters.forEach(el => cio.observe(el));
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const content = btn.nextElementSibling;
+      const icon = btn.querySelector('.faq-icon');
+      const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
+      document.querySelectorAll('.accordion-content').forEach(c => c.style.maxHeight = '0px');
+      document.querySelectorAll('.faq-icon').forEach(i => i.style.transform = 'rotate(0deg)');
+      if (!isOpen) {
+        content.style.maxHeight = content.scrollHeight + 'px';
+        icon.style.transform = 'rotate(180deg)';
+      }
+    });
+  });
+</script>
+</body>
+</html>
